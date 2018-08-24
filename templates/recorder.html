@@ -11,13 +11,14 @@
 	<title>Live input record and playback</title>
   <style type='text/css'>
     ul { list-style: none; }
-    #recordingslist audio { display: block; margin-bottom: 10px; }
+    recordingslist audio {}
+
   </style>
 </head>
 <body>
   <p>感謝幫忙錄製以下台語內容</p>
   <p>可以挑會唸的錄製即可</p>
-  <p>按下錄音後，請馬上錄製，1秒後停止</p>
+  <p>提供音檔上傳麻煩請使用"錄1秒自動停止"</p>
   <pre>
      中文   台語          中文   台語          中文   台語
   1. 一     一        11. 後退   退後      21. 樹     樹
@@ -32,10 +33,10 @@
   10.零     零        20. 房屋   厝        30. 關     關
   </pre>
 
+  <button onclick="startRecording_autostop(this);">錄1秒自動停止</button>
   <button onclick="startRecording(this);">錄音</button>
-  <!-- 1秒自動停止 不需要stop按鈕
   <button onclick="stopRecording(this);" disabled>停止</button>
-  -->
+
   <div id=div1 style="display:none">
       錄音中...
   </div>
@@ -66,20 +67,26 @@
     __log('錄音機初始化');
   }
 
-  function startRecording(button) {
+  function startRecording_autostop(button) {
     recorder && recorder.record();
-    //div1.style.display='';
     button.disabled = true;
-    //button.nextElementSibling.disabled = false;
     __log('錄音中...');
-
-    //1秒自動停止 所以上面按鈕相關功能可以註解掉
+    //1秒自動停止
     setTimeout("autostopRecording()",1000);
     button.disabled = false;
   }
 
+  function startRecording(button) {
+    recorder && recorder.record();
+    div1.style.display='';
+    button.disabled = true;
+    button.nextElementSibling.disabled = false;
+    __log('錄音中...');
+  }
+
   function autostopRecording() {
       recorder && recorder.stop();
+      __log('停止錄音');
       createDownloadLink();
       recorder.clear();
   }
@@ -103,6 +110,7 @@
       var li = document.createElement('li');
       var au = document.createElement('audio');
       var hf = document.createElement('a');
+      var download = document.createElement("button");
       var remove = document.createElement("button");
       var upload = document.createElement("button");
       var div = document.createElement("div");
@@ -114,13 +122,20 @@
       au.src = url;
       hf.href = url;
       hf.download = filename + '.wav';
+      hf.id = 'dl';
       hf.innerHTML = hf.download;
+      download.innerHTML = "下載"
+      download.onclick = function(){
+          li.appendChild(hf)
+          hf.click()
+          li.removeChild(hf)
+      };
       remove.innerHTML = "刪除";
       remove.onclick = function(){
           recordingslist.removeChild(li)
       };
       li.appendChild(au);
-      li.appendChild(hf);
+      li.appendChild(download);
       li.appendChild(remove);
       div.innerHTML = "上傳成功";
       upload.innerHTML = "上傳";
