@@ -10,9 +10,17 @@ from django.http import HttpResponse
 from django.utils.html import escape
 import datetime
 
+ctx ={}
+rlt = ""
+
 def recorder(request):
     return render(request, 'recorder.html', {
     })
+
+def set_name(request):
+    return render(request, 'set_name.html', {
+    })
+
 def model_form_upload(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -30,7 +38,7 @@ def upload(request):
     customHeader = request.META['HTTP_MYCUSTOMHEADER']
 
 
-    time = "documents/" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + ".wav"
+    time = "documents/" + ctx['rlt'] + "_" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S.%f")[:-3] + ".wav"
     # obviously handle correct naming of the file and place it somewhere like media/uploads/
     uploadedFile = open(time, "wb")
     # the actual file is in request.body
@@ -38,3 +46,11 @@ def upload(request):
     uploadedFile.close()
     # put additional logic like creating a model instance or something like this here
     return HttpResponse(escape(repr(request)))
+
+def name_post(request):
+    if request.POST:
+        ctx['rlt'] = request.POST['q']
+        return render(request, "recorder.html", ctx)
+    else:
+        ctx['rlt'] = ""
+        return render(request, "set_name.html")
