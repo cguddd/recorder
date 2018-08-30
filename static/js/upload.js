@@ -29,6 +29,24 @@ function uploadAudioFromBlob(blob) {
         alert('上傳成功');
     };
     */
-
     xhr.send(blob);
 }
+
+function uploadword(word) {
+    var csrftoken = getCookie('csrftoken');
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'upload_word', true);
+    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+    xhr.setRequestHeader("MyCustomHeader", "Put anything you need in here, like an ID");
+
+    /* 提示可以關掉
+    xhr.upload.onloadend = function () {
+        alert('上傳成功');
+    };
+    */
+    let fd = new FormData;
+    fd.append('thisword',word);
+    xhr.send(fd);
+}
+
