@@ -15,13 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from trips.views import recorder, model_form_upload, upload, name_post, set_name
+from trips.views import recorder, model_form_upload, upload, name_post, set_name, upload_word
 
-urlpatterns = [
+urlpatterns = {
     path('admin/', admin.site.urls),
     path('recorder_origin', recorder),
     path('upload', model_form_upload),
     path('upload_server', upload),
-    path('recorder', name_post),
+    path('main', name_post),
     path('set_name', set_name),
-]
+    path('upload_word', upload_word),
+}
