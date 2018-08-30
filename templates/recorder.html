@@ -122,7 +122,6 @@
         words_th = words_th + 1;
     this_word.innerHTML = words[words_th];
     wordlist.appendChild(this_word);
-    uploadword(words[words_th]);
     /*
     var xhr = new XMLHttpRequest();
     xhr.open('POST', 'get_words_th', true);
@@ -142,6 +141,7 @@
       var upload = document.createElement("button");
       var div = document.createElement("div");
       var word = document.createElement("div");
+      var thisword = document.createElement("div");
       var theFirstChild = recordingslist.firstChild;
 
       //name of .wav file to use during upload and download (without extendion)
@@ -164,6 +164,7 @@
           recordingslist.removeChild(li)
       };
       word.innerHTML = "錄音內容: " + words[words_th];
+      thisword.innerHTML = words[words_th];
       li.appendChild(word);
       li.appendChild(au);
       li.appendChild(download);
@@ -171,6 +172,7 @@
       div.innerHTML = "上傳成功";
       upload.innerHTML = "上傳";
       upload.onclick = function(){
+          uploadword(thisword.innerHTML);
           uploadAudioFromBlob(blob);
           li.appendChild(div)
       };
