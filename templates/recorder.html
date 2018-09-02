@@ -39,10 +39,11 @@
   </script>
   <div>正在錄製的字:</div>
   <p id="wordlist">一</p>
-  <button onclick="nextword(this);">錄下一個</button>
-  <button onclick="startRecording_autostop(this);">錄1秒自動停止</button>
-  <button onclick="startRecording(this);">錄音</button>
-  <button onclick="stopRecording(this);" disabled>停止</button>
+  <button onclick="preword(this);" id="preword">錄上一個</button>
+  <button onclick="nextword(this);" id="nextword">錄下一個</button>
+  <button onclick="startRecording(this);" id="startRecording">錄音</button>
+  <button onclick="stopRecording(this);" id="stopRecording" disabled>停止</button>
+  <button onclick="startRecording_autostop(this);" id="startRecording_autostop">錄1秒自動停止</button>
 
   <div id=div1 style="display:none">
       錄音中...
@@ -78,23 +79,34 @@
 
   function startRecording_autostop(button) {
     recorder && recorder.record();
+    div1.style.display='';
     button.disabled = true;
+    document.getElementById("preword").disabled = true;
+    document.getElementById("nextword").disabled = true;
+    document.getElementById("startRecording").disabled = true;
     __log('錄音中...');
     //1秒自動停止
     setTimeout("autostopRecording()",1000);
-    button.disabled = false;
   }
 
   function startRecording(button) {
     recorder && recorder.record();
     div1.style.display='';
     button.disabled = true;
-    button.nextElementSibling.disabled = false;
+    document.getElementById("preword").disabled = true;
+    document.getElementById("nextword").disabled = true;
+    document.getElementById("stopRecording").disabled = false;
+    document.getElementById("startRecording_autostop").disabled = true;
     __log('錄音中...');
   }
 
   function autostopRecording() {
       recorder && recorder.stop();
+      div1.style.display='none';
+      document.getElementById("preword").disabled = false;
+      document.getElementById("nextword").disabled = false;
+      document.getElementById("startRecording").disabled = false;
+      document.getElementById("startRecording_autostop").disabled = false;
       __log('停止錄音');
       createDownloadLink();
       recorder.clear();
@@ -104,7 +116,10 @@
     recorder && recorder.stop();
     div1.style.display='none';
     button.disabled = true;
-    button.previousElementSibling.disabled = false;
+    document.getElementById("preword").disabled = false;
+    document.getElementById("nextword").disabled = false;
+    document.getElementById("startRecording").disabled = false;
+    document.getElementById("startRecording_autostop").disabled = false;
     __log('停止錄音');
     
     // create WAV download link using audio data blob
@@ -113,21 +128,26 @@
     recorder.clear();
   }
 
+  function preword() {
+    var this_word = document.createElement("div");
+    wordlist.removeChild(wordlist.childNodes[0]);
+    if(words_th === 0)
+        words_th = words.length - 1;
+    else
+        words_th = words_th - 1;
+    this_word.innerHTML = words[words_th];
+    wordlist.appendChild(this_word);
+  }
+
   function nextword() {
     var this_word = document.createElement("div");
     wordlist.removeChild(wordlist.childNodes[0]);
-    if(words_th === 29)
+    if(words_th === words.length - 1)
         words_th = 0;
     else
         words_th = words_th + 1;
     this_word.innerHTML = words[words_th];
     wordlist.appendChild(this_word);
-    /*
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'get_words_th', true);
-    xhr.setRequestHeader("MyCustomHeader", "Put anything you need in here, like an ID");
-    xhr.send(words_th);
-    */
   }
 
   function createDownloadLink() {
